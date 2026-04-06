@@ -1352,12 +1352,67 @@ function Seccion6Fiscal({ datos, setDatos }) {
 function Seccion7Revision({ datos, validaciones }) {
   const [generando, setGenerando] = useState(false);
   const [generado, setGenerado] = useState(false);
+  const [error, setError] = useState(null);
+  const [urlDescarga, setUrlDescarga] = useState(null);
   
   const handleGenerar = async () => {
     setGenerando(true);
-    await new Promise(r => setTimeout(r, 2000));
-    setGenerando(false);
-    setGenerado(true);
+    setError(null);
+    setGenerado(false);
+    
+    try {
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(datos),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error al generar documento');
+      }
+      
+      // Obtener el blob del documento
+      const blob = await response.blob();
+      
+      // Crear URL para descarga
+      const url = window.URL.createObjectURL(blob);
+      setUrlDescarga(url);
+      
+      // Obtener nombre del archivo del header
+      const contentDisposition = response.headers.get('Content-Disposition');
+      const filenameMatch = contentDisposition?.match(/filename="(.+)"/);
+      const filename = filenameMatch ? filenameMatch[1] : `cesion_${datos.fideicomiso.numero || 'borrador'}.docx`;
+      
+      // Descargar automáticamente
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      
+      setGenerado(true);
+      
+    } catch (err) {
+      console.error('Error:', err);
+      setError(err.message);
+    } finally {
+      setGenerando(false);
+    }
+  };
+  
+  const handleDescargarOtraVez = () => {
+    if (urlDescarga) {
+      const a = document.createElement('a');
+      a.href = urlDescarga;
+      a.download = `cesion_${datos.fideicomiso.numero || 'borrador'}.docx`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
   };
 
   return (
@@ -1417,20 +1472,41 @@ function Seccion7Revision({ datos, validaciones }) {
       <div className="bg-white border border-gray-200 rounded-lg p-4">
         <button onClick={handleGenerar} disabled={generando}
           className={`w-full py-4 px-6 rounded-lg font-bold text-lg transition-all ${generando ? 'bg-gray-400 cursor-wait' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}>
-          {generando ? '⏳ Generando documento...' : '📄 Generar Escritura .docx'}
+          {generando ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+              </svg>
+              Generando documento...
+            </span>
+          ) : '📄 Generar Escritura .docx'}
         </button>
+        
+        {error && (
+          <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-center gap-2 text-red-800 font-semibold">
+              <span>❌</span> Error
+            </div>
+            <p className="text-sm text-red-700 mt-1">{error}</p>
+          </div>
+        )}
         
         {generado && (
           <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
             <div className="flex items-center gap-2 text-green-800 font-semibold mb-3">
-              <span>✓</span> Documento generado exitosamente
+              <span>✓</span> Documento generado y descargado
             </div>
             <div className="flex gap-2">
-              <button className="flex-1 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium">
-                ⬇️ Descargar .docx
+              <button 
+                onClick={handleDescargarOtraVez}
+                className="flex-1 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium">
+                ⬇️ Descargar otra vez
               </button>
-              <button className="flex-1 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50">
-                👁️ Vista previa
+              <button 
+                onClick={() => { setGenerado(false); setUrlDescarga(null); }}
+                className="flex-1 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50">
+                🔄 Generar nuevo
               </button>
             </div>
           </div>
