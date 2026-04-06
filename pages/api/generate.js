@@ -17,8 +17,11 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Se requiere al menos un cesionario' });
     }
     
-    // Generar el documento
-    const buffer = await generarCesionFideicomiso(datos);
+    // Obtener bancoId del fideicomiso (default: bajio)
+    const bancoId = datos.fideicomiso?.bancoId || 'bajio';
+    
+    // Generar el documento con la estructura del banco
+    const buffer = await generarCesionFideicomiso(datos, bancoId);
     
     // Nombre del archivo basado en el número de fideicomiso
     const numFideicomiso = datos.fideicomiso?.numero || 'borrador';
