@@ -1520,9 +1520,180 @@ function Seccion7Revision({ datos, validaciones }) {
 // APP PRINCIPAL
 // ============================================================================
 
+// Datos de prueba: La Joya de Mismaloya 5204 (caso real)
+const DATOS_PRUEBA = {
+  cedentes: [{
+    id: 'ced-1',
+    tipoPersona: 'fisica',
+    tipoComparecencia: 'propio_derecho',
+    nombreCompleto: 'Robert William Johnson',
+    genero: 'M',
+    nacionalidad: 'Estadounidense',
+    hablaEspanol: false,
+    estadoCivil: 'casado',
+    nombreConyuge: 'Mary Elizabeth Johnson',
+    fechaNacimiento: '1958-03-15',
+    lugarNacimiento: 'Denver, Colorado',
+    paisNacimiento: 'Estados Unidos de América',
+    ocupacion: 'empresario jubilado',
+    estatusMigratorio: 'turista',
+    pasaporteNumero: 'C04455667',
+    pasaportePais: 'Estados Unidos',
+    domicilioCalle: '456 Oak Avenue',
+    domicilioNumero: '201',
+    domicilioColonia: '',
+    domicilioCiudad: 'Denver',
+    domicilioEstado: 'Colorado',
+    domicilioPais: 'Estados Unidos de América',
+    domicilioCP: '80202',
+    telefono: '3035551234',
+    email: 'rjohnson@email.com'
+  }],
+  cesionarios: [{
+    id: 'ces-1',
+    tipoPersona: 'fisica',
+    tipoComparecencia: 'propio_derecho',
+    nombreCompleto: 'Michael David Smith',
+    genero: 'M',
+    nacionalidad: 'Canadiense',
+    hablaEspanol: false,
+    estadoCivil: 'casado',
+    nombreConyuge: 'Jennifer Anne Smith',
+    fechaNacimiento: '1975-08-22',
+    lugarNacimiento: 'Toronto, Ontario',
+    paisNacimiento: 'Canadá',
+    ocupacion: 'ingeniero de software',
+    estatusMigratorio: 'turista',
+    pasaporteNumero: 'GA123456',
+    pasaportePais: 'Canadá',
+    domicilioCalle: '789 Maple Street',
+    domicilioNumero: '305',
+    domicilioColonia: '',
+    domicilioCiudad: 'Toronto',
+    domicilioEstado: 'Ontario',
+    domicilioPais: 'Canadá',
+    domicilioCP: 'M5V2T6',
+    telefono: '4165551234',
+    email: 'msmith@email.com'
+  }],
+  interprete: {
+    activo: true,
+    usarDefault: true,
+    incluirContacto: false,
+    datos: { ...INTERPRETE_DEFAULT }
+  },
+  fideicomiso: {
+    numero: '11639',
+    bancoId: 'bajio',
+    bancoNombre: 'Banco del Bajío',
+    bancoRazonSocial: 'Banco del Bajío, S.A., Institución de Banca Múltiple',
+    permisoSRE: '2541328',
+    permisoFolio: '22547',
+    permisoFecha: '2007-09-25',
+    delegados: [...DELEGADOS_DEFAULT],
+    escrituraOriginal: {
+      numero: '15470',
+      fecha: '2007-04-13',
+      notario: 'Sergio Salvador Aguirre Anguiano',
+      notariaNumero: '1',
+      notariaCiudad: 'Guadalajara, Jalisco'
+    },
+    cesionesPrevias: [{
+      id: 'cesion-1',
+      escritura: '49621',
+      fecha: '2015-11-18',
+      notario: 'Sergio Salvador Aguirre Anguiano',
+      notariaNumero: '1',
+      notariaCiudad: 'Guadalajara, Jalisco',
+      cedente: 'Desarrollos La Joya de Mismaloya, S.A. de C.V.',
+      cesionario: 'Robert William Johnson'
+    }]
+  },
+  inmueble: {
+    tipoInmueble: 'departamento',
+    numeroUnidad: '5204',
+    numeroUnidadLetra: 'cinco mil doscientos cuatro',
+    direccion: 'Kilómetro 11 de la Carretera Federal 200 Puerto Vallarta-Barra de Navidad',
+    ciudad: 'Puerto Vallarta',
+    municipio: 'Puerto Vallarta',
+    estado: 'Jalisco',
+    esCondominio: true,
+    nombreCondominio: 'La Joya de Mismaloya',
+    indiviso: '0.7275%',
+    descripcionLegal: 'El inmueble tiene una superficie de 63.62 m² (sesenta y tres metros, sesenta y dos decímetros cuadrados), y las siguientes medidas y colindancias: AL NORTE: 7.30 metros con área común de pasillo; AL SUR: 7.30 metros con departamento 5203; AL ESTE: 8.50 metros con vista al mar; AL OESTE: 8.50 metros con área común de estacionamiento.',
+    folioReal: '4051211',
+    ciudadRegistro: 'Puerto Vallarta',
+    cuentaPredial: 'U30515',
+    claveCatastral: '067 01 0001 010 001 00014 0204',
+    regimenCondominio: {
+      escritura: '48029',
+      fecha: '2006-12-15',
+      notario: 'Sergio Salvador Aguirre Anguiano',
+      notariaNumero: '1',
+      notariaCiudad: 'Guadalajara, Jalisco'
+    }
+  },
+  contraprestacion: {
+    montoUSD: '280000',
+    tipoCambio: '16.9948',
+    montoMXN: '4758544',
+    fechaTipoCambio: '2026-05-01',
+    formaPago: 'escrow',
+    empresaEscrowId: 'armour',
+    empresaEscrowOtra: '',
+    cuentaEscrow: 'ASE-260280'
+  },
+  cuentasOrigen: [{
+    id: 'cuenta-origen-1',
+    tipo: 'origen',
+    titular: 'Michael David Smith',
+    banco: 'TD Bank',
+    terminacion: '6568',
+    pais: 'Canadá'
+  }],
+  cuentasDestino: [{
+    id: 'cuenta-destino-1',
+    tipo: 'destino',
+    titular: 'Robert William Johnson',
+    banco: 'Chase Bank',
+    terminacion: '5204',
+    pais: 'Estados Unidos'
+  }],
+  sustitutosPorCesionario: {
+    'ces-1': [
+      { id: 'sust-1', nombre: 'Jennifer Anne Smith', genero: 'F', nacionalidad: 'Canadiense', porcentaje: '50', relacion: 'cónyuge' },
+      { id: 'sust-2', nombre: 'David Michael Smith Jr.', genero: 'M', nacionalidad: 'Canadiense', porcentaje: '25', relacion: 'hijo' },
+      { id: 'sust-3', nombre: 'Sarah Elizabeth Smith', genero: 'F', nacionalidad: 'Canadiense', porcentaje: '25', relacion: 'hija' }
+    ]
+  },
+  fiscal: {
+    isrEnajenacion: 'casa_habitacion',
+    comprobantesCFE: true,
+    montoISRRetenido: '',
+    isrAdquisicion: 'no_genera',
+    iva: 'exento_habitacional',
+    montoIVA: '',
+    baseTransmisiones: 'avaluo',
+    tasaTransmisiones: '2',
+    montoTransmisiones: '32790.17',
+    avaluoMonto: '1639508.42',
+    avaluoFecha: '2026-03-15',
+    avaluoPerito: 'Alfonso Gómez Bautista',
+    avaluoTitulo: 'Arquitecto',
+    estado: 'Jalisco'
+  },
+  fechaEscritura: new Date().toISOString().split('T')[0]
+};
+
 export default function FideicomisoGen() {
   const [seccionActual, setSeccionActual] = useState(1);
   const [datos, setDatos] = useState(ESTADO_INICIAL);
+  
+  // Cargar datos de prueba
+  const cargarDatosPrueba = () => {
+    setDatos(DATOS_PRUEBA);
+    setSeccionActual(7); // Ir directo a revisión
+  };
   
   // Validaciones por sección
   const validaciones = useMemo(() => ({
@@ -1558,9 +1729,17 @@ export default function FideicomisoGen() {
               <h1 className="text-xl font-bold text-gray-900">FideicomisoGen</h1>
               <p className="text-xs text-gray-500">Generador de Cesiones de Derechos Fideicomisarios</p>
             </div>
-            <div className="text-right">
-              <div className="text-xs text-gray-500">Sección {seccionActual} de 7</div>
-              <div className="text-sm font-medium text-blue-600">{SECCIONES[seccionActual - 1]?.nombre}</div>
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={cargarDatosPrueba}
+                className="text-xs bg-amber-100 hover:bg-amber-200 text-amber-800 px-3 py-1.5 rounded-md border border-amber-300 font-medium"
+              >
+                🧪 Cargar datos de prueba
+              </button>
+              <div className="text-right">
+                <div className="text-xs text-gray-500">Sección {seccionActual} de 7</div>
+                <div className="text-sm font-medium text-blue-600">{SECCIONES[seccionActual - 1]?.nombre}</div>
+              </div>
             </div>
           </div>
         </div>
